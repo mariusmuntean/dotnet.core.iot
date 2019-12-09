@@ -121,8 +121,8 @@ namespace dotnet.core.iot
             SetMagContinuous();
 
             // Set default ranges for the 3 sensors
-            SetAccScale(LinearAccelerationScale._2G);
-            SetGyroScale(AngularRateScale._245);
+            SetAccScale(LinearAccelerationScale._16G);
+            SetGyroScale(AngularRateScale._2000);
             SetMagnetometerRange(MagneticSensitivityScale._4Gauss);
         }
 
