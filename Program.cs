@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Device.I2c;
 using System.Threading;
+using System.Threading.Tasks;
 using dotnet.core.iot.csharp.AHRS;
+using Grpc.Net.Client;
+using GrpcGreeter;
 using Iot.Device.Lsm9Ds1;
 
 namespace dotnet.core.iot
@@ -47,8 +50,15 @@ namespace dotnet.core.iot
         //        Thread.Sleep(Timeout.Infinite);
         //    }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
+            // This switch must be set before creating the GrpcChannel/HttpClient.
+            AppContext.SetSwitch(
+                "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
+            var channel = GrpcChannel.ForAddress("http://192.168.0.40:5000");
+            var client = new Location.LocationClient(channel);
+
             var degreesToRadiansFactor = Math.PI / 180;
             var radiansToDegreesFactor = 180.0f / Math.PI;
             var samplePeriod = TimeSpan.FromMilliseconds(50);
@@ -83,6 +93,11 @@ namespace dotnet.core.iot
                 var rollDegrees = ahrs.Roll * radiansToDegreesFactor;
                 var pitchDegrees = ahrs.Pitch * radiansToDegreesFactor;
                 var yawDegrees = ahrs.Yaw * radiansToDegreesFactor;
+
+                client.UpdateLocationAsync(
+                    new NewLocation {Roll = rollDegrees, Pitch = pitchDegrees, Yaw = yawDegrees}
+                );
+
                 Console.WriteLine($"Roll    {rollDegrees:N3}    Pitch {pitchDegrees:N3}    Yaw {yawDegrees:N3}");
                 Console.WriteLine();
 
@@ -92,24 +107,23 @@ namespace dotnet.core.iot
             Thread.Sleep(Timeout.Infinite);
         }
 
-
-//        public const int I2cAddress = 0x6B;
-//        static void Main (string[] args) {
-//            using (var ag = new Lsm9Ds1AccelerometerAndGyroscope (CreateI2cDevice ())) {
-//                while (true) {
-//
-//                    Console.WriteLine ($"Accelerometer x {ag.Acceleration.X:N3}  y {ag.Acceleration.X:N3}  z {ag.Acceleration.Z:N3}");
-//                    Console.WriteLine ($"Gyroscope     x {ag.AngularRate.X:N3}   y {ag.AngularRate.X:N3}   z {ag.AngularRate.Z:N3}");
-//
-//                    Thread.Sleep (100);
-//                }
-//            }
-//        }
-//
-//        private static I2cDevice CreateI2cDevice () {
-//            var settings = new I2cConnectionSettings (1, I2cAddress);
-//            return I2cDevice.Create (settings);
-//        }
+        //        public const int I2cAddress = 0x6B;
+        //        static void Main (string[] args) {
+        //            using (var ag = new Lsm9Ds1AccelerometerAndGyroscope (CreateI2cDevice ())) {
+        //                while (true) {
+        //
+        //                    Console.WriteLine ($"Accelerometer x {ag.Acceleration.X:N3}  y {ag.Acceleration.X:N3}  z {ag.Acceleration.Z:N3}");
+        //                    Console.WriteLine ($"Gyroscope     x {ag.AngularRate.X:N3}   y {ag.AngularRate.X:N3}   z {ag.AngularRate.Z:N3}");
+        //
+        //                    Thread.Sleep (100);
+        //                }
+        //            }
+        //        }
+        //
+        //        private static I2cDevice CreateI2cDevice () {
+        //            var settings = new I2cConnectionSettings (1, I2cAddress);
+        //            return I2cDevice.Create (settings);
+        //        }
 
         // static void Main(string[] args)
         // {

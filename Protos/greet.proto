@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcGreeter";
+
+package greet;
+
+// The greeting service definition.
+service Location {
+  // Sends a greeting
+  rpc UpdateLocation (NewLocation) returns (Ok);
+}
+
+// The request message containing the user's name.
+message NewLocation {
+  double roll = 1;
+  double pitch = 2;
+  double yaw = 3;
+}
+
+// The response message containing the greetings.
+message Ok {
+}

@@ -7,11 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.11.1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.25.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.25.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Iot.Device.Bindings" Version="1.0.0" />
     <PackageReference Include="System.Device.Gpio" Version="1.0.0" />
     <PackageReference Include="Unosquare.Raspberry.IO" Version="0.27.0" />
     <PackageReference Include="Unosquare.RaspberryIO.Peripherals" Version="0.5.0" />
     <PackageReference Include="Unosquare.WiringPi" Version="0.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\greet.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>
